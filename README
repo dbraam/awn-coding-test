@@ -1,0 +1,63 @@
+This repository contains the publish/subscribe exercise outlined in the
+Arctic Wolf Networks coding test:
+
+--
+
+The goal of the exercise is to build a simple publish-subscribe
+(https://en.wikipedia.org/wiki/Publish–subscribe_pattern) system. The system can
+be built in any language and using any technology stack, provided that it
+satisfies the requirements below. Note that it is not expected that you already
+know how to build such a system, nor are we expecting a from-scratch
+implementation. You are encouraged to use any aids (Google, StackOverflow, etc.)
+and any publicly available third-party software that you deem helpful.
+
+The functional requirements of the system are as follows:
+
+  - The publisher produces messages at a rate of 20 per second. The messages are
+    randomly chosen integers.
+  - There are two subscribers. Each subscriber processes the same messages and
+    performs different aggregations on the message stream:
+      - One subscriber computes and outputs sums of the integers that it
+        receives in 5 second windows
+            As a simplified example, suppose the subscriber runs for 10 seconds
+            and receives the integers 6, 2, and 10 during the first five seconds
+            that it is up and the messages 8, 2, and -5 in the second five
+            second period. The expected output will be 18 and 5.
+      - The other subscriber computes and outputs median of the integers that it
+        receives in 5 second windows
+            Assuming the second subscriber runs for the same amount of time as
+            the first subscriber and receives the same integers, the expected
+            output will be 6 and 2.
+      - The subscribers perform their computation in “processing time” rather
+        than “event time” – that is, you do *not* need to worry about time skew
+        between when the message is sent and when it is received. Each
+        subscriber’s time windows are determined by when that particular
+        subscriber happens to see the message.
+  - The publisher sends every message exactly once. It cannot directly send the
+    message individually to each subscriber.
+  - You may make any other assumptions you feel are necessary, but please
+    clearly state them.
+  - Hint: Feel free to use open source software, like Redis or ActiveMQ, which
+    provide publish-subscribe functionality out-of-the-box to build your system.
+    That said, you’re not limited to using Redis or ActiveMQ.
+
+The deployment requirements of the system are as follows:
+
+  - We prefer that the solution be runnable on one of Ubuntu Linux or macOS
+    Sierra. A solution that runs on a reasonably recent version of Windows is
+    also acceptable.
+  - The solution should be able to run on a single physical machine.
+  - Please provide setup instructions on how to run the system. It should not
+    take us more than half an hour to install the necessary software and try
+    running your solution.
+  - Potential options for distributing your solutions include but are not
+    limited to:
+      - A tar ball or zip file of your code and scripts to install the necessary
+        software
+      - A GitHub/BitBucket repository of your code and scripts to install the
+        necessary software
+      - A Vagrant (https://www.vagrantup.com) image
+      - A Docker (https://www.docker.com) image
+  - The source code that you yourself have written needs to be included and
+    clearly pointed out as such
+
