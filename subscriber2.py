@@ -6,6 +6,7 @@
 import sys
 import redis
 import datetime
+import numpy
 
 """Simple subscriher which listens for messages published to a redis server
 on a given channvel.
@@ -15,12 +16,15 @@ TODO: More detail here...
 
 WINDOW_SIZE = 5		# seconds
 
-sum = 0
+def median(lst):
+    return numpy.median(numpy.array(lst))
+
+entries_in_window = []
 start_time = None
 
 def message_handler(message):
   global start_time
-  global sum
+  global entries_in_window
 
   if start_time is None:
     start_time = datetime.datetime.now()
@@ -28,11 +32,12 @@ def message_handler(message):
     now = datetime.datetime.now()
     delta = now - start_time
     if delta.total_seconds() >= WINDOW_SIZE:
-      print 'Sum of integers received in last 5 seconds: ' + str(sum)
-      sum = 0
+      print 'Median of integers received in last 5 seconds:',
+      print str(int(median(entries_in_window)))
+      entries_in_window = []
       start_time = now
   
-  sum += int(message['data'])    
+  entries_in_window.append(int(message['data']))
 
 def main():
   script_name = sys.argv[0]
