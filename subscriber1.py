@@ -3,69 +3,30 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-import sys
-import redis
-import datetime
+from common_subscriber import CommonSubscriber
 
 """Simple subscriher which listens for messages published to a redis server
 on a given channvel.
 
-TODO: More detail here...
+This subscriber sums all of the integer messages it receives over a specified
+period of time (the window size) on the configured channel and outputs the
+result after each window.
 """
 
-WINDOW_SIZE = 5		# seconds
+class Subscriber1(CommonSubscriber):
+  _sum = 0
 
-sum = 0
-start_time = None
+  def _output_result_and_reset(self):
+    print 'Sum of integers received in last {0} seconds: '.format(
+      self._opts['window_size_seconds']) + str(self._sum)
+    self._sum = 0
 
-def message_handler(message):
-  global start_time
-  global sum
-
-  if start_time is None:
-    start_time = datetime.datetime.now()
-  else:
-    now = datetime.datetime.now()
-    delta = now - start_time
-    if delta.total_seconds() >= WINDOW_SIZE:
-      print 'Sum of integers received in last 5 seconds: ' + str(sum)
-      sum = 0
-      start_time = now
-  
-  sum += int(message['data'])    
+  def _handle_message(self, message):
+    self._sum += int(message['data'])    
 
 def main():
-  script_name = sys.argv[0]
-  args = sys.argv[1:]
-
-  usage = 'usage: ' + script_name + ' [--channel channel]'
-
-  channel = ''
-  hostname = 'localhost'
-  port = 6379
-
-  if args:
-    if args[0] == '-?':
-      print usage
-      sys.exit(1)
-    elif args[0] == '--channel':
-      del args[0]
-      channel = args[0]
-    else:
-      print 'invalid option: ' + args[0]
-      print usage
-
-  if len(channel) == 0:
-    channel = 'default-channel'
-
-  print 'subscribing on channel: ' + channel
-
-  r = redis.StrictRedis(host=hostname, port=port, db=0)
-  p = r.pubsub(ignore_subscribe_messages=True)
-  p.subscribe(**{channel: message_handler})
-
-  for message in p.listen():
-    pass
+  subscriber = Subscriber1()
+  subscriber.run()
 
 if __name__ == '__main__':
   main()

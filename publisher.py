@@ -9,21 +9,20 @@ import time
 import random
 
 """Simple publisher which publishes random integers to a redis server.
-
-TODO: More detail here...
 """
 
-def main():
+def parse_command_line():
   script_name = sys.argv[0]
   args = sys.argv[1:]
 
   usage = 'usage: ' + script_name + ' [--channel channel]'
 
-  channel = 'default-channel'
-  hostname = 'localhost'
-  port = 6379
-  min_int = 0
-  max_int = 1000
+  opts = {'channel' : 'default-channel',
+          'hostname' : 'localhost',
+          'port' : 6379,
+          'min_int' : 0,
+          'max_int' : 1000,
+          'messages_per_second' : 20}
 
   if args:
     if args[0] == '-?':
@@ -31,18 +30,22 @@ def main():
       sys.exit(1)
     elif args[0] == '--channel':
       del args[0]
-      channel = args[0]
+      opts['channel'] = args[0]
     else:
       print 'invalid option: ' + args[0]
       print usage
 
-  print 'publishing on channel: ' + channel
+  print 'publishing on channel: ' + opts['channel']
 
-  r = redis.StrictRedis(host=hostname, port=port, db=0)
+  return opts
+
+def main():
+  opts = parse_command_line()
+  r = redis.StrictRedis(host=opts['hostname'], port=opts['port'], db=0)
 
   while True:
-    r.publish(channel, random.randint(min_int, max_int))
-    time.sleep(0.05)
+    r.publish(opts['channel'], random.randint(opts['min_int'], opts['max_int']))
+    time.sleep(1.0 / opts['messages_per_second'])
 
 if __name__ == '__main__':
   main()
