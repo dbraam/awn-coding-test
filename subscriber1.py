@@ -16,12 +16,12 @@ result after each window.
 class Subscriber1(CommonSubscriber):
   _sum = 0
 
-  def output_result_and_reset(self):
+  def _output_result_and_reset(self):
     print 'Sum of integers received in last {0} seconds: '.format(
       WINDOW_SIZE) + str(self._sum)
     self._sum = 0
 
-  def handle_message(self, message):
+  def _handle_message(self, message):
     self._sum += int(message['data'])    
 
 def main():

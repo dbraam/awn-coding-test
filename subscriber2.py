@@ -20,12 +20,12 @@ def median(lst):
 class Subscriber2(CommonSubscriber):
   _entries_in_window = []
 
-  def output_result_and_reset(self):
+  def _output_result_and_reset(self):
     print 'Median of integers received in last {0} seconds: '.format(
       WINDOW_SIZE) + str(int(median(self._entries_in_window)))
     self._entries_in_window = []
 
-  def handle_message(self, message):
+  def _handle_message(self, message):
     self._entries_in_window.append(int(message['data']))
 
 def main():
