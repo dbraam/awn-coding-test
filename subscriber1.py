@@ -3,7 +3,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-from common_subscriber import CommonSubscriber, WINDOW_SIZE
+from common_subscriber import CommonSubscriber
 
 """Simple subscriher which listens for messages published to a redis server
 on a given channvel.
@@ -18,7 +18,7 @@ class Subscriber1(CommonSubscriber):
 
   def _output_result_and_reset(self):
     print 'Sum of integers received in last {0} seconds: '.format(
-      WINDOW_SIZE) + str(self._sum)
+      self._opts['window_size_seconds']) + str(self._sum)
     self._sum = 0
 
   def _handle_message(self, message):

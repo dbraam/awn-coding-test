@@ -11,11 +11,10 @@ import datetime
 redis server on a given channvel.
 """
 
-WINDOW_SIZE = 5		# seconds
-
 class CommonSubscriber:
   """Common (abstract) base class for both subscribers."""
 
+  _opts = {}
   _start_time = None
 
   def message_handler(self, message):
@@ -24,7 +23,7 @@ class CommonSubscriber:
     else:
       now = datetime.datetime.now()
       delta = now - self._start_time
-      if delta.total_seconds() >= WINDOW_SIZE:
+      if delta.total_seconds() >= self._opts['window_size_seconds']:
         self._output_result_and_reset()
         self._start_time = now
   
@@ -38,11 +37,15 @@ class CommonSubscriber:
   def _handle_message(self, message):
     pass
 
+  def __init__(self):
+    self._opts = parse_command_line()
+
   def run(self):
-    opts = parse_command_line()
-    r = redis.StrictRedis(host=opts['hostname'], port=opts['port'], db=0)
+    r = redis.StrictRedis(host=self._opts['hostname'], port=self._opts['port'],
+       db=0)
     p = r.pubsub(ignore_subscribe_messages=True)
-    p.subscribe(**{opts['channel']: self.message_handler})
+    print 'subscribing on channel: ' + self._opts['channel']
+    p.subscribe(**{self._opts['channel']: self.message_handler})
 
     for message in p.listen():
       pass
@@ -53,9 +56,10 @@ def parse_command_line():
 
   usage = 'usage: ' + script_name + ' [--channel channel]'
 
-  channel = ''
-  hostname = 'localhost'
-  port = 6379
+  opts = {'channel' : 'default-channel',
+          'hostname' : 'localhost',
+          'port' : 6379,
+          'window_size_seconds' : 5}
 
   if args:
     if args[0] == '-?':
@@ -63,19 +67,9 @@ def parse_command_line():
       sys.exit(1)
     elif args[0] == '--channel':
       del args[0]
-      channel = args[0]
+      opts['channel'] = args[0]
     else:
       print 'invalid option: ' + args[0]
       print usage
 
-  if len(channel) == 0:
-    channel = 'default-channel'
-
-  print 'subscribing on channel: ' + channel
-
-  d = {}
-  d['hostname'] = hostname
-  d['port'] = port
-  d['channel'] = channel
-
-  return d
+  return opts
