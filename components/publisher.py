@@ -11,9 +11,9 @@ import random
 """Simple publisher which publishes random integers to a redis server.
 """
 
-def parse_command_line():
-  script_name = sys.argv[0]
-  args = sys.argv[1:]
+def parse_command_line(argv):
+  script_name = argv[0]
+  args = argv[1:]
 
   usage = 'usage: ' + script_name + ' [--channel channel]'
 
@@ -40,7 +40,7 @@ def parse_command_line():
   return opts
 
 def main():
-  opts = parse_command_line()
+  opts = parse_command_line(sys.argv)
   r = redis.StrictRedis(host=opts['hostname'], port=opts['port'], db=0)
 
   while True:
