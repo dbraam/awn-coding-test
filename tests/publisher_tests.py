@@ -11,9 +11,36 @@ from ..components import publisher
 
 class PublisherTests(unittest.TestCase):
 
-  def test_parse_command_line_default_channel(self):
-    opts = publisher.parse_command_line(['./publisher.py'])
-    self.assertTrue('default-channel' == opts['channel'])
+  def test_num_available_opts(self):
+    opts = vars(publisher.parser.parse_args([]))
+    self.assertTrue(len(opts) == 6)
+
+  def test_opt_names(self):
+    opts = vars(publisher.parser.parse_args([]))
+    valid_opts = ('channel', 'frequency', 'hostname', 'max', 'min', 'port')
+    self.assertTrue(valid_opts == tuple(sorted(opts.keys())))
+
+  def test_default_channel(self):
+    self._verify_opt('channel', 'default-channel')
+
+  def test_default_hostname(self):
+    self._verify_opt('hostname', 'localhost')
+
+  def test_default_port(self):
+    self._verify_opt('port', 6379)
+
+  def test_default_min(self):
+    self._verify_opt('min', 0)
+
+  def test_default_max(self):
+    self._verify_opt('max', 1000)
+
+  def test_default_frequency(self):
+    self._verify_opt('frequency', 20)
+
+  def _verify_opt(self, key, value):
+    opts = vars(publisher.parser.parse_args([]))
+    self.assertTrue(opts[key] == value)
 
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(PublisherTests)
