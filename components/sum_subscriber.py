@@ -13,19 +13,22 @@ period of time (the window size) on the configured channel and outputs the
 result after each window.
 """
 
-class Subscriber1(CommonSubscriber):
+class SumSubscriber(CommonSubscriber):
   _sum = 0
 
   def _output_result_and_reset(self):
     print 'Sum of integers received in last {0} seconds: '.format(
-      self._opts['window_size_seconds']) + str(self._sum)
+      self._opts['window']) + str(self._sum)
     self._sum = 0
 
   def _handle_message(self, message):
     self._sum += int(message['data'])    
 
+  def _get_usage_description(self):
+    return 'Subscriber that sums the integers received during each window.'
+
 def main():
-  subscriber = Subscriber1()
+  subscriber = SumSubscriber()
   subscriber.run()
 
 if __name__ == '__main__':
