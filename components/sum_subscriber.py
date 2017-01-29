@@ -5,8 +5,8 @@
 
 from common_subscriber import CommonSubscriber
 
-"""Simple subscriher which listens for messages published to a redis server
-on a given channvel.
+"""Simple subscriher which listens for messages published to an AWS SQS queue
+subscribed to an AWS SNS topic.
 
 This subscriber sums all of the integer messages it receives over a specified
 period of time (the window size) on the configured channel and outputs the
@@ -21,11 +21,14 @@ class SumSubscriber(CommonSubscriber):
       self._opts['window']) + str(self._sum)
     self._sum = 0
 
-  def _handle_message(self, message):
-    self._sum += int(message['data'])    
+  def _handle_message(self, body):
+    self._sum += int(body['Message'])
 
   def _get_usage_description(self):
     return 'Subscriber that sums the integers received during each window.'
+
+  def _get_default_queue(self):
+    return 'SumQueue'
 
 def main():
   subscriber = SumSubscriber()

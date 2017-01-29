@@ -13,21 +13,15 @@ class PublisherTests(unittest.TestCase):
 
   def test_num_available_opts(self):
     opts = vars(publisher.parser.parse_args([]))
-    self.assertTrue(len(opts) == 6)
+    self.assertTrue(len(opts) == 4)
 
   def test_opt_names(self):
     opts = vars(publisher.parser.parse_args([]))
-    valid_opts = ('channel', 'frequency', 'hostname', 'max', 'min', 'port')
+    valid_opts = ('frequency', 'max', 'min', 'topic')
     self.assertTrue(valid_opts == tuple(sorted(opts.keys())))
 
-  def test_default_channel(self):
-    self._verify_opt('channel', 'default-channel')
-
-  def test_default_hostname(self):
-    self._verify_opt('hostname', 'localhost')
-
-  def test_default_port(self):
-    self._verify_opt('port', 6379)
+  def test_default_topic(self):
+    self._verify_opt('topic', 'random-integers')
 
   def test_default_min(self):
     self._verify_opt('min', 0)

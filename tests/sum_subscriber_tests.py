@@ -15,6 +15,9 @@ class SumSubscriberTests(common_subscriber_tests.CommonSubscriberTests):
   def _get_opts(self):
     return sum_subscriber.SumSubscriber()._opts
 
+  def _get_default_queue(self):
+    return 'SumQueue'
+
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(SumSubscriberTests)
   unittest.TextTestRunner(verbosity=2).run(suite)
