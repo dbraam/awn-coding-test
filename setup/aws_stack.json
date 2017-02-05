@@ -39,11 +39,13 @@
     },
 
     "MyQueue1" : {
-      "Type" : "AWS::SQS::Queue"
+      "Type" : "AWS::SQS::Queue",
+      "Properties" : {}
     },
 
     "MyQueue2" : {
-      "Type" : "AWS::SQS::Queue"
+      "Type" : "AWS::SQS::Queue",
+      "Properties" : {}
     },
 
     "MyPublishUser" : {
