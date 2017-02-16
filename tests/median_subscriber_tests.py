@@ -10,14 +10,15 @@ from ..components import median_subscriber
 """Unit tests for the median_subscriber module.
 """
 
+
 class MedianSubscriberTests(common_subscriber_tests.CommonSubscriberTests):
+    def _get_opts(self):
+        return median_subscriber.MedianSubscriber()._opts
 
-  def _get_opts(self):
-    return median_subscriber.MedianSubscriber()._opts
+    def _get_default_queue(self):
+        return 'MedianQueue'
 
-  def _get_default_queue(self):
-    return 'MedianQueue'
 
 if __name__ == '__main__':
-  suite = unittest.TestLoader().loadTestsFromTestCase(MedianSubscriberTests)
-  unittest.TextTestRunner(verbosity=2).run(suite)
+    suite = unittest.TestLoader().loadTestsFromTestCase(MedianSubscriberTests)
+    unittest.TextTestRunner(verbosity=2).run(suite)
