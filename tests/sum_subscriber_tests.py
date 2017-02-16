@@ -5,7 +5,7 @@
 
 import unittest
 from . import common_subscriber_tests
-from ..components import sum_subscriber
+from components import sum_subscriber
 
 """Unit tests for the sum_subscriber module.
 """

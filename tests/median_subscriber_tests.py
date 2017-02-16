@@ -4,8 +4,8 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 import unittest
-from . import common_subscriber_tests
-from ..components import median_subscriber
+import common_subscriber_tests
+from components import median_subscriber
 
 """Unit tests for the median_subscriber module.
 """

@@ -4,7 +4,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 import unittest
-from ..components import publisher
+from components import publisher
 
 """Unit tests for the publisher module.
 """

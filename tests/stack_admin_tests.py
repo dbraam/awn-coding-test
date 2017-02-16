@@ -4,7 +4,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 import unittest
-from ..setup import stack_admin
+from setup import stack_admin
 
 """Unit tests for the stack_admin module.
 """
