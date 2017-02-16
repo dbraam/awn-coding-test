@@ -15,7 +15,10 @@ result after each window.
 
 
 class SumSubscriber(CommonSubscriber):
-    _sum = 0
+
+    def __init__(self):
+        super(SumSubscriber, self).__init__()
+        self._sum = 0
 
     def _output_result_and_reset(self):
         print 'Sum of integers received in last {0} seconds: '.format(

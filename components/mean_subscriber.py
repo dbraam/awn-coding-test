@@ -9,40 +9,40 @@ from common_subscriber import CommonSubscriber
 """Simple subscriber which listens for messages published to an AWS SQS queue
 subscribed to an AWS SNS topic.
 
-This subscriber calculates the median of all of the integer messages it receives
+This subscriber calculates the mean of all of the integer messages it receives
 over a specified period of time (the window size) on the configured channel and
 outputs the result after each window.
 """
 
 
-def median(lst):
-    return numpy.median(numpy.array(lst))
+def mean(lst):
+    return numpy.mean(numpy.array(lst))
 
 
-class MedianSubscriber(CommonSubscriber):
+class MeanSubscriber(CommonSubscriber):
     def __init__(self):
-        super(MedianSubscriber, self).__init__()
+        CommonSubscriber.__init__(self)
         self._entries_in_window = []
 
     def _output_result_and_reset(self):
-        print 'Median of integers received in last {0} seconds:'.format(
+        print 'Mean of integers received in last {0} seconds:'.format(
             self._opts['window']),
-        print str(int(median(self._entries_in_window)))
+        print str(int(mean(self._entries_in_window)))
         self._entries_in_window = []
 
     def _handle_message(self, body):
         self._entries_in_window.append(int(body['Message']))
 
     def _get_usage_description(self):
-        return 'Subscriber that calculates the median of the integers received ' \
+        return 'Subscriber that calculates the mean of the integers received ' \
                + 'during each window.'
 
     def _get_default_queue(self):
-        return 'MedianQueue'
+        return 'MeanQueue'
 
 
 def main():
-    subscriber = MedianSubscriber()
+    subscriber = MeanSubscriber()
     subscriber.run()
 
 

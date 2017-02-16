@@ -6,19 +6,32 @@
 import argparse
 import datetime
 import json
+from abc import ABCMeta, abstractmethod
 
 import boto3
 
-"""Common base class for subscrihers which listen for messages published to an
+"""Common base class for subscribers which listen for messages published to an
 AWS SQS queue which is subscribed to an AWS SNS topic.
 """
 
 
-class CommonSubscriber:
+class CommonSubscriber(object):
     """Common (abstract) base class for both subscribers."""
 
-    _opts = {}
-    _start_time = None
+    __metaclass__ = ABCMeta
+
+    def __init__(self):
+        parser = argparse.ArgumentParser(
+            description=self._get_usage_description())
+        parser.add_argument('--topic', default='random-integers',
+            help='the topic to subscribe to (default: %(default)s)')
+        parser.add_argument('--queue', default=self._get_default_queue(),
+            help='the queue to receive messages from (default: %(default)s)')
+        parser.add_argument('--window', default=5, type=int,
+            help='window size in seconds to accumulate data (default: %(default)s)')
+
+        self._opts = vars(parser.parse_args())
+        self._start_time = None
 
     def _message_handler(self, message):
         if self._start_time is None:
@@ -34,33 +47,22 @@ class CommonSubscriber:
         self._handle_message(body)
         message.delete()
 
-    # abstract
+    @abstractmethod
     def _output_result_and_reset(self):
         pass
 
-    # abstract
+    @abstractmethod
     def _handle_message(self, body):
         pass
 
-    # abstract
+    @abstractmethod
     def _get_usage_description(self):
-        pass
+        return ''
 
-    # abstract
+    @abstractmethod
     def _get_default_queue(self):
-        pass
+        return ''
 
-    def __init__(self):
-        parser = argparse.ArgumentParser(
-            description=self._get_usage_description())
-        parser.add_argument('--topic', default='random-integers',
-            help='the topic to subscribe to (default: %(default)s)')
-        parser.add_argument('--queue', default=self._get_default_queue(),
-            help='the queue to receive messages from (default: %(default)s)')
-        parser.add_argument('--window', default=5, type=int,
-            help='window size in seconds to accumulate data (default: %(default)s)')
-
-        self._opts = vars(parser.parse_args())
 
     def run(self):
         print 'subscribing to topic {0} using queue {1}'.format(
